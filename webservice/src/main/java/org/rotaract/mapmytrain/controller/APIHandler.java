@@ -21,11 +21,11 @@ public class APIHandler {
 
     @RequestMapping(value = "/{version}/adduser", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public String addUser(@PathVariable("version") String version, @RequestBody String json) {
         if (!feature.validateRequest(version)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_VERSION));
         }
-        return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, userService.addUser(json)));
+        String status = userService.addUser(json);
+        return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, status));
     }
 }
