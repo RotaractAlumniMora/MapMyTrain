@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan({"org.rotaract.mapmytrain"})
+@ComponentScan(basePackages = "org.rotaract.mapmytrain")
 @EnableAutoConfiguration
 public class Main extends SpringBootServletInitializer {
 
