@@ -6,11 +6,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @author Chanaka Lakmal
- * @since 1.0
- */
-
 @Component
 public class CORSFilter implements Filter {
 
