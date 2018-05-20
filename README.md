@@ -18,8 +18,18 @@ mvn spring-boot:run
 
 ### How to test
 
-1. Add user to database
+Get the `API-KEY` before you test and add it to environment variables of your system as follows:
+
+`APIKEY=<YOUR_API_KEY>`
+
+
+The absolute URL should have the following structure.
+
+`<protocol>://<host>:<port>/<context_path>/<api_version>/<api_key>/<resource_path>`
+
+
+##### Add user to database
 
 ```$curl
-curl -d '{"name":"Chanaka", "email":"ldclakmal@gmail.com"}' -H "Content-Type: application/json" -X POST http://localhost:8080/ws-mapmytrain/v1/adduser
+curl -d '{"name":"Chanaka", "email":"ldclakmal@gmail.com"}' -H "Content-Type: application/json" -X POST http://localhost:8080/ws-mapmytrain/v1/C461D3C23C7E7264726A8D1DD5E/adduser
 ```
