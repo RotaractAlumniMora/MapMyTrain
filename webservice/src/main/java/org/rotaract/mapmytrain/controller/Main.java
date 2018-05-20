@@ -1,4 +1,4 @@
-package org.rotaract.alumni.mora.mapmytrain.controller;
+package org.rotaract.mapmytrain.controller;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan
+@ComponentScan({"org.rotaract.mapmytrain"})
 @EnableAutoConfiguration
 public class Main extends SpringBootServletInitializer {
 

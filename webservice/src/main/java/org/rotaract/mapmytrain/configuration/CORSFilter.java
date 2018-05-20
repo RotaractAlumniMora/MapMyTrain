@@ -1,4 +1,4 @@
-package org.rotaract.alumni.mora.mapmytrain.configuration;
+package org.rotaract.mapmytrain.configuration;
 
 import org.springframework.stereotype.Component;
 
