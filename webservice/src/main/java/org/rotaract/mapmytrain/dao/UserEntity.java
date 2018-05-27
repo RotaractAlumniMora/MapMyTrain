@@ -23,16 +23,6 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "Name")
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Basic
     @Column(name = "PhoneNum")
     public String getPhoneNum() {
         return phoneNum;
@@ -40,6 +30,16 @@ public class UserEntity {
 
     public void setPhoneNum(String phoneNum) {
         this.phoneNum = phoneNum;
+    }
+
+    @Basic
+    @Column(name = "Name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

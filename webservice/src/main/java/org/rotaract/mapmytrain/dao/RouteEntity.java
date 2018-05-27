@@ -11,6 +11,7 @@ public class RouteEntity {
     private int routeId;
     private String startLoc;
     private String endLoc;
+    private String routeName;
 
     @Id
     @Column(name = "RouteId")
@@ -40,6 +41,16 @@ public class RouteEntity {
 
     public void setEndLoc(String endLoc) {
         this.endLoc = endLoc;
+    }
+
+    @Basic
+    @Column(name = "RouteName")
+    public String getRouteName() {
+        return routeName;
+    }
+
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
     }
 
     @Override

@@ -16,6 +16,19 @@ public class TrainEntity {
     private String startLoc;
     private String endLoc;
 
+
+//    @ManyToOne
+//    @JoinColumn(name = "RouteId")
+//    private RouteEntity route;
+//
+//    public RouteEntity getRoute() {
+//        return route;
+//    }
+//
+//    public void setRoute(RouteEntity route) {
+//        this.route = route;
+//    }
+
     @Id
     @Column(name = "TrainId")
     public int getTrainId() {
@@ -85,6 +98,7 @@ public class TrainEntity {
     public void setEndLoc(String endLoc) {
         this.endLoc = endLoc;
     }
+
 
     @Override
     public boolean equals(Object o) {
