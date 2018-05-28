@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.StringJoiner;
 
 @RestController
 public class APIHandler {
@@ -23,6 +22,11 @@ public class APIHandler {
 
     @Autowired
     private NotificationService notificationService;
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String root() {
+        return "Welcome to Map My Train !";
+    }
 
     @RequestMapping(value = "/{version}/{apikey}/adduser", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,7 +58,7 @@ public class APIHandler {
         return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, status));
     }
 
-//    Subscribe requests
+    //    Subscribe requests
 
     @RequestMapping(value = "/{version}/{apikey}/subscribeuser", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -87,6 +91,7 @@ public class APIHandler {
     }
 
     //    Comment/Notification requests
+
     @RequestMapping(value = "/{version}/{apikey}/gettrains", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getTrains(@PathVariable("version") String version, @PathVariable("apikey") String apiKey) {
