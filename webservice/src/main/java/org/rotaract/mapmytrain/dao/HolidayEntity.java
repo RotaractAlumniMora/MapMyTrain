@@ -4,17 +4,17 @@ import javax.persistence.*;
 import java.sql.Date;
 
 /**
- * Created by TharinduSK on 23/05/2018.
+ * Created by TharinduSK on 28/05/2018.
  */
 @Entity
-@Table(name = "holiday")
+@Table(name = "holiday", schema = "mapmytrain", catalog = "")
 public class HolidayEntity {
     private int id;
     private Date date;
     private String day;
 
     @Id
-    @Column(name = "Id")
+    @Column(name = "Id", nullable = false)
     public int getId() {
         return id;
     }
@@ -24,7 +24,7 @@ public class HolidayEntity {
     }
 
     @Basic
-    @Column(name = "Date")
+    @Column(name = "Date", nullable = true)
     public Date getDate() {
         return date;
     }
@@ -34,7 +34,7 @@ public class HolidayEntity {
     }
 
     @Basic
-    @Column(name = "Day")
+    @Column(name = "Day", nullable = true, length = 10)
     public String getDay() {
         return day;
     }

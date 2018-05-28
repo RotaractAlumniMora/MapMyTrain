@@ -4,17 +4,18 @@ import javax.persistence.*;
 import java.sql.Time;
 
 /**
- * Created by TharinduSK on 23/05/2018.
+ * Created by TharinduSK on 28/05/2018.
  */
 @Entity
-@Table(name = "subscribetime", schema = "mapmytraindb", catalog = "")
+@Table(name = "subscribetime", schema = "mapmytrain", catalog = "")
 public class SubscribetimeEntity {
     private int id;
+    private int subscribeId;
     private Time startTime;
     private Time endTime;
 
     @Id
-    @Column(name = "Id")
+    @Column(name = "Id", nullable = false)
     public int getId() {
         return id;
     }
@@ -24,7 +25,17 @@ public class SubscribetimeEntity {
     }
 
     @Basic
-    @Column(name = "StartTime")
+    @Column(name = "SubscribeId", nullable = false)
+    public int getSubscribeId() {
+        return subscribeId;
+    }
+
+    public void setSubscribeId(int subscribeId) {
+        this.subscribeId = subscribeId;
+    }
+
+    @Basic
+    @Column(name = "StartTime", nullable = false)
     public Time getStartTime() {
         return startTime;
     }
@@ -34,7 +45,7 @@ public class SubscribetimeEntity {
     }
 
     @Basic
-    @Column(name = "EndTime")
+    @Column(name = "EndTime", nullable = false)
     public Time getEndTime() {
         return endTime;
     }
@@ -51,6 +62,7 @@ public class SubscribetimeEntity {
         SubscribetimeEntity that = (SubscribetimeEntity) o;
 
         if (id != that.id) return false;
+        if (subscribeId != that.subscribeId) return false;
         if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
         if (endTime != null ? !endTime.equals(that.endTime) : that.endTime != null) return false;
 
@@ -60,6 +72,7 @@ public class SubscribetimeEntity {
     @Override
     public int hashCode() {
         int result = id;
+        result = 31 * result + subscribeId;
         result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
         result = 31 * result + (endTime != null ? endTime.hashCode() : 0);
         return result;

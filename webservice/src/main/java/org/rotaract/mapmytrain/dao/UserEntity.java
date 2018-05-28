@@ -3,17 +3,17 @@ package org.rotaract.mapmytrain.dao;
 import javax.persistence.*;
 
 /**
- * Created by TharinduSK on 23/05/2018.
+ * Created by TharinduSK on 28/05/2018.
  */
 @Entity
-@Table(name = "user")
+@Table(name = "user", schema = "mapmytrain", catalog = "")
 public class UserEntity {
     private int userId;
     private String name;
     private String phoneNum;
 
     @Id
-    @Column(name = "UserId")
+    @Column(name = "UserId", nullable = false)
     public int getUserId() {
         return userId;
     }
@@ -23,23 +23,23 @@ public class UserEntity {
     }
 
     @Basic
-    @Column(name = "PhoneNum")
-    public String getPhoneNum() {
-        return phoneNum;
-    }
-
-    public void setPhoneNum(String phoneNum) {
-        this.phoneNum = phoneNum;
-    }
-
-    @Basic
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false, length = 45)
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Basic
+    @Column(name = "PhoneNum", nullable = false, length = 45)
+    public String getPhoneNum() {
+        return phoneNum;
+    }
+
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
     }
 
     @Override

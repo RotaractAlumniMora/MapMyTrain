@@ -4,19 +4,20 @@ import javax.persistence.*;
 import java.sql.Time;
 
 /**
- * Created by TharinduSK on 23/05/2018.
+ * Created by TharinduSK on 28/05/2018.
  */
 @Entity
-@Table(name = "trainstationschedule")
+@Table(name = "trainstationschedule", schema = "mapmytrain", catalog = "")
 public class TrainstationscheduleEntity {
     private int id;
+    private int trainId;
     private int day;
     private Time arrivalTime;
     private Time departureTime;
     private String station;
 
     @Id
-    @Column(name = "Id")
+    @Column(name = "Id", nullable = false)
     public int getId() {
         return id;
     }
@@ -26,7 +27,17 @@ public class TrainstationscheduleEntity {
     }
 
     @Basic
-    @Column(name = "Day")
+    @Column(name = "TrainId", nullable = false)
+    public int getTrainId() {
+        return trainId;
+    }
+
+    public void setTrainId(int trainId) {
+        this.trainId = trainId;
+    }
+
+    @Basic
+    @Column(name = "Day", nullable = false)
     public int getDay() {
         return day;
     }
@@ -36,7 +47,7 @@ public class TrainstationscheduleEntity {
     }
 
     @Basic
-    @Column(name = "ArrivalTime")
+    @Column(name = "ArrivalTime", nullable = false)
     public Time getArrivalTime() {
         return arrivalTime;
     }
@@ -46,7 +57,7 @@ public class TrainstationscheduleEntity {
     }
 
     @Basic
-    @Column(name = "DepartureTime")
+    @Column(name = "DepartureTime", nullable = false)
     public Time getDepartureTime() {
         return departureTime;
     }
@@ -56,7 +67,7 @@ public class TrainstationscheduleEntity {
     }
 
     @Basic
-    @Column(name = "Station")
+    @Column(name = "Station", nullable = false, length = 45)
     public String getStation() {
         return station;
     }
@@ -73,6 +84,7 @@ public class TrainstationscheduleEntity {
         TrainstationscheduleEntity that = (TrainstationscheduleEntity) o;
 
         if (id != that.id) return false;
+        if (trainId != that.trainId) return false;
         if (day != that.day) return false;
         if (arrivalTime != null ? !arrivalTime.equals(that.arrivalTime) : that.arrivalTime != null) return false;
         if (departureTime != null ? !departureTime.equals(that.departureTime) : that.departureTime != null)
@@ -85,6 +97,7 @@ public class TrainstationscheduleEntity {
     @Override
     public int hashCode() {
         int result = id;
+        result = 31 * result + trainId;
         result = 31 * result + day;
         result = 31 * result + (arrivalTime != null ? arrivalTime.hashCode() : 0);
         result = 31 * result + (departureTime != null ? departureTime.hashCode() : 0);

@@ -3,12 +3,13 @@ package org.rotaract.mapmytrain.dao;
 import javax.persistence.*;
 
 /**
- * Created by TharinduSK on 23/05/2018.
+ * Created by TharinduSK on 28/05/2018.
  */
 @Entity
-@Table(name = "train")
+@Table(name = "train", schema = "mapmytrain", catalog = "")
 public class TrainEntity {
     private int trainId;
+    private int routeId;
     private String name;
     private String type;
     private String startTime;
@@ -16,21 +17,8 @@ public class TrainEntity {
     private String startLoc;
     private String endLoc;
 
-
-//    @ManyToOne
-//    @JoinColumn(name = "RouteId")
-//    private RouteEntity route;
-//
-//    public RouteEntity getRoute() {
-//        return route;
-//    }
-//
-//    public void setRoute(RouteEntity route) {
-//        this.route = route;
-//    }
-
     @Id
-    @Column(name = "TrainId")
+    @Column(name = "TrainId", nullable = false)
     public int getTrainId() {
         return trainId;
     }
@@ -40,7 +28,17 @@ public class TrainEntity {
     }
 
     @Basic
-    @Column(name = "Name")
+    @Column(name = "RouteId", nullable = false)
+    public int getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(int routeId) {
+        this.routeId = routeId;
+    }
+
+    @Basic
+    @Column(name = "Name", nullable = true, length = 20)
     public String getName() {
         return name;
     }
@@ -50,7 +48,7 @@ public class TrainEntity {
     }
 
     @Basic
-    @Column(name = "Type")
+    @Column(name = "Type", nullable = true, length = 20)
     public String getType() {
         return type;
     }
@@ -60,7 +58,7 @@ public class TrainEntity {
     }
 
     @Basic
-    @Column(name = "StartTime")
+    @Column(name = "StartTime", nullable = true, length = 45)
     public String getStartTime() {
         return startTime;
     }
@@ -70,7 +68,7 @@ public class TrainEntity {
     }
 
     @Basic
-    @Column(name = "EndTime")
+    @Column(name = "EndTime", nullable = true, length = 45)
     public String getEndTime() {
         return endTime;
     }
@@ -80,7 +78,7 @@ public class TrainEntity {
     }
 
     @Basic
-    @Column(name = "StartLoc")
+    @Column(name = "StartLoc", nullable = true, length = 45)
     public String getStartLoc() {
         return startLoc;
     }
@@ -90,7 +88,7 @@ public class TrainEntity {
     }
 
     @Basic
-    @Column(name = "EndLoc")
+    @Column(name = "EndLoc", nullable = true, length = 45)
     public String getEndLoc() {
         return endLoc;
     }
@@ -98,7 +96,6 @@ public class TrainEntity {
     public void setEndLoc(String endLoc) {
         this.endLoc = endLoc;
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -108,6 +105,7 @@ public class TrainEntity {
         TrainEntity that = (TrainEntity) o;
 
         if (trainId != that.trainId) return false;
+        if (routeId != that.routeId) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (type != null ? !type.equals(that.type) : that.type != null) return false;
         if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
@@ -121,6 +119,7 @@ public class TrainEntity {
     @Override
     public int hashCode() {
         int result = trainId;
+        result = 31 * result + routeId;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
