@@ -2,7 +2,6 @@ package org.rotaract.mapmytrain.service;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import org.rotaract.mapmytrain.dao.UserEntity;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +30,7 @@ public class UserService {
         }
 
         EntityManager entityManager = factory.createEntityManager();
-        int userId = 0;
+
         String resMsg = Constant.Status.SUCCESS;
         JsonObject userJson = (JsonObject) jsonParser.parse(json);
 
@@ -66,7 +65,6 @@ public class UserService {
 
         return resMsg;
     }
-
 
     public String updateUserName(String json) {
 
@@ -107,7 +105,6 @@ public class UserService {
         return resMsg;
     }
 
-
     public String updateUserPhone(String json) {
 
         EntityManagerFactory factory;
@@ -146,7 +143,6 @@ public class UserService {
 
         return resMsg;
     }
-
 
     private static String getStackTrace(final Throwable throwable) {
         final StringWriter sw = new StringWriter();

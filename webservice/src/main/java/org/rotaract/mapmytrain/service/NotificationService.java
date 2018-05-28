@@ -2,77 +2,17 @@ package org.rotaract.mapmytrain.service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.rotaract.mapmytrain.dao.SubscribeEntity;
-import org.rotaract.mapmytrain.dao.UserEntity;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class NotificationService {
-
-    private JsonParser jsonParser = new JsonParser();
-
-    public String addNews(String json) {
-
-        EntityManagerFactory factory;
-
-        try {
-            factory = Persistence.createEntityManagerFactory("org.hibernate.mapmytrain.jpa");
-        } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
-            throw new ExceptionInInitializerError(ex);
-        }
-
-        EntityManager entityManager = factory.createEntityManager();
-        int userId = 0;
-        String resMsg = Constant.Status.SUCCESS;
-        JsonObject userJson = (JsonObject) jsonParser.parse(json);
-
-        try {
-            entityManager.getTransaction( ).begin( );
-
-            Query query = entityManager.createQuery( "Select e from UserEntity e where e.phoneNum is " + "'"
-                    + userJson.get("phone_num").getAsString() + "'");
-
-            List users = query.getResultList();
-
-            if(users.isEmpty())
-            {
-                UserEntity user = new UserEntity();
-                user.setName(userJson.get("name").getAsString());
-                user.setPhoneNum(userJson.get("phone_num").getAsString());
-
-                entityManager.persist(user);
-                entityManager.getTransaction().commit();
-            }else
-            {
-                resMsg = Constant.Status.USER_ALREADY_EXISTS_ERROR ;
-            }
-
-            entityManager.close( );
-
-        } catch (Exception e) {
-            resMsg = Constant.Status.ERROR;
-        } finally {
-            factory.close();
-        }
-
-        return resMsg;
-
-    }
 
     public List getTrains() {
 
@@ -89,13 +29,13 @@ public class NotificationService {
         List trains = new ArrayList<String>();
 
         try {
-            entityManager.getTransaction( ).begin( );
+            entityManager.getTransaction().begin();
 
-            Query query = entityManager.createQuery( "Select t.trainId, t.startLoc,t.endLoc, t.startTime, t.endTime from TrainEntity t");
+            Query query = entityManager.createQuery("Select t.trainId, t.startLoc,t.endLoc, t.startTime, t.endTime from TrainEntity t");
 
             trains = query.getResultList();
 
-            entityManager.close( );
+            entityManager.close();
 
         } catch (Exception e) {
             trains.add(Constant.Status.ERROR);
@@ -106,7 +46,7 @@ public class NotificationService {
         return trains;
     }
 
-    public JsonArray getNewsHeadlines(){
+    public JsonArray getNewsHeadlines() {
 
         JsonArray newsHeadlineList = new JsonArray();
         JsonObject headline1 = new JsonObject();
@@ -126,7 +66,7 @@ public class NotificationService {
 
     }
 
-    public JsonObject getNewsDeatils(String json){
+    public JsonObject getNewsDeatils(String json) {
 
         JsonObject news = new JsonObject();
         news.addProperty("route", "10");
