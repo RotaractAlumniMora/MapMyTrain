@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Time;
 
 /**
- * Created by TharinduSK on 28/05/2018.
+ * Created by TharinduSK on 29/05/2018.
  */
 @Entity
 @Table(name = "trainstationschedule", schema = "mapmytrain", catalog = "")

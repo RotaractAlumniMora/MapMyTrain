@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 /**
- * Created by TharinduSK on 28/05/2018.
+ * Created by TharinduSK on 29/05/2018.
  */
 @Entity
 @Table(name = "news", schema = "mapmytrain", catalog = "")
@@ -14,7 +14,7 @@ public class NewsEntity {
     private int trainId;
     private int newsTypeId;
     private String message;
-    private Timestamp recordTime;
+    private Timestamp recordTimestamp;
 
     @Id
     @Column(name = "Id", nullable = false)
@@ -67,13 +67,13 @@ public class NewsEntity {
     }
 
     @Basic
-    @Column(name = "RecordTime", nullable = false)
-    public Timestamp getRecordTime() {
-        return recordTime;
+    @Column(name = "RecordTimestamp", nullable = false)
+    public Timestamp getRecordTimestamp() {
+        return recordTimestamp;
     }
 
-    public void setRecordTime(Timestamp recordTime) {
-        this.recordTime = recordTime;
+    public void setRecordTimestamp(Timestamp recordTimestamp) {
+        this.recordTimestamp = recordTimestamp;
     }
 
     @Override
@@ -88,7 +88,8 @@ public class NewsEntity {
         if (trainId != that.trainId) return false;
         if (newsTypeId != that.newsTypeId) return false;
         if (message != null ? !message.equals(that.message) : that.message != null) return false;
-        if (recordTime != null ? !recordTime.equals(that.recordTime) : that.recordTime != null) return false;
+        if (recordTimestamp != null ? !recordTimestamp.equals(that.recordTimestamp) : that.recordTimestamp != null)
+            return false;
 
         return true;
     }
@@ -100,7 +101,7 @@ public class NewsEntity {
         result = 31 * result + trainId;
         result = 31 * result + newsTypeId;
         result = 31 * result + (message != null ? message.hashCode() : 0);
-        result = 31 * result + (recordTime != null ? recordTime.hashCode() : 0);
+        result = 31 * result + (recordTimestamp != null ? recordTimestamp.hashCode() : 0);
         return result;
     }
 }

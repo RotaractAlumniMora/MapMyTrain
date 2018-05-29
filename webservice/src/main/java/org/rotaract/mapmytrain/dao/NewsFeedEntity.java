@@ -2,6 +2,7 @@ package org.rotaract.mapmytrain.dao;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Created by TharinduSK on 29/05/2018.
@@ -15,6 +16,7 @@ public class NewsFeedEntity {
     private String link;
     private String description;
     private Date date;
+    private Time time;
 
     @Id
     @Column(name = "Id", nullable = false)
@@ -76,6 +78,16 @@ public class NewsFeedEntity {
         this.date = date;
     }
 
+    @Basic
+    @Column(name = "Time", nullable = true)
+    public Time getTime() {
+        return time;
+    }
+
+    public void setTime(Time time) {
+        this.time = time;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -89,6 +101,7 @@ public class NewsFeedEntity {
         if (link != null ? !link.equals(that.link) : that.link != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
+        if (time != null ? !time.equals(that.time) : that.time != null) return false;
 
         return true;
     }
@@ -101,6 +114,7 @@ public class NewsFeedEntity {
         result = 31 * result + (link != null ? link.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (time != null ? time.hashCode() : 0);
         return result;
     }
 }

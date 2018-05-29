@@ -1,9 +1,10 @@
 package org.rotaract.mapmytrain.dao;
 
 import javax.persistence.*;
+import java.sql.Time;
 
 /**
- * Created by TharinduSK on 28/05/2018.
+ * Created by TharinduSK on 29/05/2018.
  */
 @Entity
 @Table(name = "train", schema = "mapmytrain", catalog = "")
@@ -12,8 +13,8 @@ public class TrainEntity {
     private int routeId;
     private String name;
     private String type;
-    private String startTime;
-    private String endTime;
+    private Time startTime;
+    private Time endTime;
     private String startLoc;
     private String endLoc;
 
@@ -58,22 +59,22 @@ public class TrainEntity {
     }
 
     @Basic
-    @Column(name = "StartTime", nullable = true, length = 45)
-    public String getStartTime() {
+    @Column(name = "StartTime", nullable = true)
+    public Time getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Time startTime) {
         this.startTime = startTime;
     }
 
     @Basic
-    @Column(name = "EndTime", nullable = true, length = 45)
-    public String getEndTime() {
+    @Column(name = "EndTime", nullable = true)
+    public Time getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(Time endTime) {
         this.endTime = endTime;
     }
 
