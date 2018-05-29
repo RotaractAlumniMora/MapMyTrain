@@ -9,17 +9,19 @@
         <class>org.rotaract.mapmytrain.dao.SubscribeEntity</class>
         <class>org.rotaract.mapmytrain.dao.RouteEntity</class>
         <class>org.rotaract.mapmytrain.dao.SubscribetimeEntity</class>
+        <class>org.rotaract.mapmytrain.dao.HolidayEntity</class>
+        <class>org.rotaract.mapmytrain.dao.NewsEntity</class>
+        <class>org.rotaract.mapmytrain.dao.NewstypeEntity</class>
         <class>org.rotaract.mapmytrain.dao.TrainEntity</class>
         <class>org.rotaract.mapmytrain.dao.TrainstationscheduleEntity</class>
-        <class>org.rotaract.mapmytrain.dao.HolidayEntity</class>
-        <class>org.rotaract.mapmytrain.dao.CommentEntity</class>
+        <class>org.rotaract.mapmytrain.dao.NewsFeedEntity</class>
 
         <properties>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
-            <property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/mapmytraindb"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://mapmytrain.c9jokekuhs1f.us-east-2.rds.amazonaws.com:3306/mapmytrain"/>
             <property name="hibernate.connection.autocommit" value="true"/>
-            <property name="hibernate.connection.username" value="root"/>
-            <property name="hibernate.connection.password" value=""/>
+            <property name="hibernate.connection.username" value="mapmytrain"/>
+            <property name="hibernate.connection.password" value="6L%ioqJ0"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
             <property name="hibernate.connection.CharSet" value="utf8"/>
             <property name="hibernate.connection.characterEncoding" value="utf8"/>
