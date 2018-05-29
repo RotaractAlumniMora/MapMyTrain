@@ -19,9 +19,10 @@ $ mvn spring-boot:run
 
 ### How to test
 
-Get the `API-KEY` before you test and add it to environment variables of your system as follows:
+Get the `API-KEY` and `ACCESS-TOKEN` of Railway API v1.0, before you test and add it to environment variables of your system as follows:
 
 `APIKEY=<YOUR_API_KEY>`
+`ACCESSTOKEN=<YOUR_ACCESS_TOKEN_OF_RAILWAY_API>`
 
 
 The absolute URL should have the following structure.
