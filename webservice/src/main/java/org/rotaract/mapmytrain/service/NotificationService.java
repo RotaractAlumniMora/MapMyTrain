@@ -216,6 +216,61 @@ public class NotificationService {
         return resMsg;
     }
 
+//    public JsonArray getSubscriberAlerts(String json) {
+//
+//        EntityManagerFactory factory;
+//
+//        JsonArray alertList = new JsonArray();
+//        JsonObject alertJson = (JsonObject) jsonParser.parse(json);
+//
+//        try {
+//            factory = Persistence.createEntityManagerFactory("org.hibernate.mapmytrain.jpa");
+//        } catch (Throwable ex) {
+//            System.err.println("Failed to create sessionFactory object." + ex);
+//            throw new ExceptionInInitializerError(ex);
+//        }
+//
+//        EntityManager entityManager = factory.createEntityManager();
+//
+//        try {
+//            entityManager.getTransaction().begin();
+//
+//            Query query = entityManager.createQuery( "SELECT e FROM UserEntity e WHERE e.phoneNum IS " + "'"
+//                    + alertJson.get("phone_num").getAsString() + "'");
+//
+//            UserEntity user = (UserEntity)query.getSingleResult();
+//            List trains = query.getResultList();
+//
+//            for (Object train:trains) {
+//
+//                JsonObject trainInfo = new JsonObject();
+//
+//                trainInfo.addProperty("train_id", ((TrainEntity) train).getTrainId());
+//                trainInfo.addProperty("name", ((TrainEntity) train).getName());
+//                trainInfo.addProperty("start_loc", ((TrainEntity) train).getStartLoc());
+//                trainInfo.addProperty("end_loc", ((TrainEntity) train).getEndLoc());
+//                trainInfo.addProperty("start_time", ((TrainEntity) train).getStartTime().toString());
+//                trainInfo.addProperty("end_time", ((TrainEntity) train).getEndTime().toString());
+//
+//                trainList.add(trainInfo);
+//
+//            }
+//
+//            entityManager.close();
+//
+//
+//        } catch (Exception e) {
+//            JsonObject error = new JsonObject();
+//            error.addProperty(Constant.Status.STATUS, getStackTrace(e));
+//            trainList.add(error);
+//        } finally {
+//            factory.close();
+//        }
+//
+//        return trainList;
+//    }
+
+
     private static String getStackTrace(final Throwable throwable) {
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw, true);
