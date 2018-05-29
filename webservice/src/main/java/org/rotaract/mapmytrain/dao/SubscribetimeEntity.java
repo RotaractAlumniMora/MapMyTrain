@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Time;
 
 /**
- * Created by TharinduSK on 28/05/2018.
+ * Created by TharinduSK on 29/05/2018.
  */
 @Entity
 @Table(name = "subscribetime", schema = "mapmytrain", catalog = "")
@@ -13,6 +13,7 @@ public class SubscribetimeEntity {
     private int subscribeId;
     private Time startTime;
     private Time endTime;
+    private int day;
 
     @Id
     @Column(name = "Id", nullable = false)
@@ -54,6 +55,16 @@ public class SubscribetimeEntity {
         this.endTime = endTime;
     }
 
+    @Basic
+    @Column(name = "Day", nullable = false)
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,6 +74,7 @@ public class SubscribetimeEntity {
 
         if (id != that.id) return false;
         if (subscribeId != that.subscribeId) return false;
+        if (day != that.day) return false;
         if (startTime != null ? !startTime.equals(that.startTime) : that.startTime != null) return false;
         if (endTime != null ? !endTime.equals(that.endTime) : that.endTime != null) return false;
 
@@ -75,6 +87,7 @@ public class SubscribetimeEntity {
         result = 31 * result + subscribeId;
         result = 31 * result + (startTime != null ? startTime.hashCode() : 0);
         result = 31 * result + (endTime != null ? endTime.hashCode() : 0);
+        result = 31 * result + day;
         return result;
     }
 }
