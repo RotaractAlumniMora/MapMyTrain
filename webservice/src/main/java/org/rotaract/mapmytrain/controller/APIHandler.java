@@ -26,6 +26,9 @@ public class APIHandler {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private TrainService trainService;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String root() {
         return "Welcome to Map My Train !";
@@ -73,8 +76,7 @@ public class APIHandler {
         return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, response));
     }
 
-    @RequestMapping(value = "/{version}/{apikey}/getroutes", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{version}/{apikey}/getroutes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getRoutes(@PathVariable("version") String version, @PathVariable("apikey") String apiKey) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
@@ -95,8 +97,7 @@ public class APIHandler {
 
     //    Comment/Notification requests
 
-    @RequestMapping(value = "/{version}/{apikey}/getalltrains", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{version}/{apikey}/getalltrains", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getAllTrains(@PathVariable("version") String version, @PathVariable("apikey") String apiKey) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
@@ -142,7 +143,7 @@ public class APIHandler {
 
     @RequestMapping(value = "/{version}/{apikey}/getnewsheadlines", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getNewsHeadlines(@PathVariable("version") String version, @PathVariable("apikey") String apiKey,@RequestBody String json) {
+    public String getNewsHeadlines(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
@@ -152,12 +153,23 @@ public class APIHandler {
 
     @RequestMapping(value = "/{version}/{apikey}/getnewsdetails", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getNewsDetails(@PathVariable("version") String version, @PathVariable("apikey") String apiKey,@RequestBody String json) {
+    public String getNewsDetails(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
         JsonObject news_details = newsFeedService.getNewsDetails(json);
         return new Gson().toJson(Collections.singletonMap("news_details", news_details));
+    }
+
+    // Railway API v1.0
+
+    @RequestMapping(value = "/{version}/{apikey}/searchtrains", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchTrain(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
+        if (!Util.isValidRequest(version, apiKey)) {
+            return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
+        }
+        return trainService.searchTrain(json);
     }
 }
 

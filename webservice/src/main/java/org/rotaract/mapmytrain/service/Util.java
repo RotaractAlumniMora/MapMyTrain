@@ -12,6 +12,6 @@ public class Util {
     }
 
     public static boolean isValidRequest(String version, String apiKey) {
-        return version.equals(Constant.VERSION) && apiKey.equals(getValue(Constant.EnvironmentVariable.APIKEY));
+        return version.equals(Constant.VERSION) && apiKey.equals(Constant.Credentials.APIKEY);
     }
 }
