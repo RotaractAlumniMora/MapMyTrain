@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -46,6 +48,8 @@ public class NewsFeedService {
 
             List newsHeadlines = query.getResultList();
 
+            int threshold = 25;
+
             entityManager.close();
 
             for (Object news:newsHeadlines) {
@@ -61,8 +65,9 @@ public class NewsFeedService {
                 String[] words = baseline.split(" ");
 
                 baseline = "";
+                threshold = threshold>words.length? words.length:threshold;
 
-                for (int i = 0; i < 25 ; i++) {
+                for (int i = 0; i < threshold ; i++) {
                     baseline += words[i] + " ";
                 }
                 baseline = baseline.trim();
@@ -80,7 +85,7 @@ public class NewsFeedService {
 
         } catch (Exception e) {
             JsonObject error = new JsonObject();
-            error.addProperty(Constant.Status.STATUS, Constant.Status.ERROR);
+            error.addProperty(Constant.Status.STATUS, getStackTrace(e));
             newsHeadlineList.add(error);
         } finally {
             factory.close();
@@ -155,5 +160,12 @@ public class NewsFeedService {
 
         return newsDetail;
 
+    }
+
+    private static String getStackTrace(final Throwable throwable) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw, true);
+        throwable.printStackTrace(pw);
+        return sw.getBuffer().toString();
     }
 }
