@@ -23,7 +23,7 @@ public class TrainService {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Authorization", "Bearer " + Util.getValue(Constant.EnvironmentVariable.ACCESSTOKEN));
+        headers.set("Authorization", "Bearer " + Constant.Credentials.ACCESSTOKEN);
 
         HttpEntity<String> entity = new HttpEntity<>("", headers);
         String url = Constant.RailwayAPI.SEARCH_TRAIN + "?lang=" + lang
