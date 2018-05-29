@@ -12,8 +12,9 @@
 ### How to run
 
 ```$cmd
-mvn clean install
-mvn spring-boot:run
+$ cd webservice
+$ mvn clean install
+$ mvn spring-boot:run
 ```
 
 ### How to test
@@ -31,5 +32,5 @@ The absolute URL should have the following structure.
 ##### Add user to database
 
 ```$curl
-curl -d '{"name":"Chanaka", "email":"ldclakmal@gmail.com"}' -H "Content-Type: application/json" -X POST http://localhost:8080/ws-mapmytrain/v1/C461D3C23C7E7264726A8D1DD5E/adduser
+$ curl -d '{"name":"Chanaka", "email":"ldclakmal@gmail.com"}' -H "Content-Type: application/json" -X POST http://localhost:8080/ws-mapmytrain/v1/C461D3C23C7E7264726A8D1DD5E/adduser
 ```
