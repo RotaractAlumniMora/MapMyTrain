@@ -15,6 +15,11 @@ public class Constant {
 
     public static class EnvironmentVariable {
         public final static String APIKEY = "APIKEY";
+        public final static String ACCESSTOKEN = "ACCESSTOKEN";
+    }
+
+    public static class RailwayAPI {
+        public final static String SEARCH_TRAIN = "http://api.lankagate.gov.lk:8280/railway/1.0/train/searchTrain";
     }
 
 }
