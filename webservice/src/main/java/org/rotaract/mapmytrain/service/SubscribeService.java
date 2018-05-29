@@ -39,7 +39,7 @@ public class SubscribeService {
         try {
             entityManager.getTransaction().begin();
 
-            Query query = entityManager.createQuery("Select e from UserEntity e where e.phoneNum is " + "'"
+            Query query = entityManager.createQuery("SELECT e FROM UserEntity e WHERE e.phoneNum IS" + "'"
                     + subscriptionJson.get("phone_num").getAsString() + "'");
 
             int user_id = ((UserEntity) query.getSingleResult()).getUserId();
@@ -66,7 +66,7 @@ public class SubscribeService {
 
 //                entityManager.getTransaction().commit();
 
-                query = entityManager.createQuery("Select s.id from SubscribeEntity s ORDER BY s.id DESC");
+                query = entityManager.createQuery("SELECT s.id FROM SubscribeEntity s ORDER BY s.id DESC");
 
                 subscription = query.setMaxResults(1).getResultList();
                 subscription_id = (int) subscription.get(0);
@@ -116,7 +116,7 @@ public class SubscribeService {
         try {
             entityManager.getTransaction().begin();
 
-            Query query = entityManager.createQuery("Select e.routeId,e.routeName from RouteEntity e");
+            Query query = entityManager.createQuery("SELECT e.routeId,e.lineName FROM RouteEntity e");
 
             routes = query.getResultList();
 
@@ -131,7 +131,7 @@ public class SubscribeService {
         return routes;
     }
 
-    public List getStations(String json) {
+    public List getRouteStations(String json) {
 
         EntityManagerFactory factory;
 

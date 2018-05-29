@@ -37,7 +37,7 @@ public class UserService {
         try {
             entityManager.getTransaction( ).begin( );
 
-            Query query = entityManager.createQuery( "Select e from UserEntity e where e.phoneNum is " + "'"
+            Query query = entityManager.createQuery( "SELECT e FROM UserEntity e WHERE e.phoneNum IS " + "'"
                             + userJson.get("phone_num").getAsString() + "'");
 
             List users = query.getResultList();
@@ -84,7 +84,7 @@ public class UserService {
         try {
             entityManager.getTransaction( ).begin( );
 
-            Query query = entityManager.createQuery( "Select e from UserEntity e where e.phoneNum is " + "'"
+            Query query = entityManager.createQuery( "SELECT e FROM UserEntity e WHERE e.phoneNum IS " + "'"
                     + userJson.get("phone_num").getAsString() + "'");
 
             UserEntity user = (UserEntity) query.getSingleResult();
@@ -123,7 +123,7 @@ public class UserService {
         try {
             entityManager.getTransaction( ).begin( );
 
-            Query query = entityManager.createQuery( "Select e from UserEntity e where e.phoneNum is " + "'"
+            Query query = entityManager.createQuery( "SELECT e FROM UserEntity e WHERE e.phoneNum IS " + "'"
                     + userJson.get("old_phone_num").getAsString() + "'");
 
             UserEntity user = (UserEntity) query.getSingleResult();
