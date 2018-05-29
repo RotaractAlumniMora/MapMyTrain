@@ -163,7 +163,7 @@ public class APIHandler {
 
     // Railway API v1.0
 
-    @RequestMapping(value = "/{version}/{apikey}/searchtrain", method = RequestMethod.POST,
+    @RequestMapping(value = "/{version}/{apikey}/searchtrains", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String searchTrain(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
         if (!Util.isValidRequest(version, apiKey)) {
