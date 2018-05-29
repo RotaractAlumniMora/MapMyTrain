@@ -1,7 +1,10 @@
 package org.rotaract.mapmytrain.service;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.rotaract.mapmytrain.dao.SubscribetimeEntity;
 import org.rotaract.mapmytrain.dao.UserEntity;
 import org.springframework.stereotype.Component;
 
@@ -45,10 +48,19 @@ public class SubscribeService {
             int user_id = ((UserEntity) query.getSingleResult()).getUserId();
             int subscription_id = 0;
 
+            query = entityManager.createQuery("SELECT e FROM SubscribeEntity e");
+
+            List subscription = query.getResultList();
+
+            if (subscription.isEmpty())
+            {
+                entityManager.createNativeQuery("ALTER TABLE subscribe AUTO_INCREMENT = 1").executeUpdate();
+            }
+
             query = entityManager.createNativeQuery("SELECT Id FROM subscribe WHERE UserId= " + "'"
                     + user_id + "'");
 
-            List subscription = query.getResultList();
+            subscription = query.getResultList();
 
             if (subscription.isEmpty()) {
                 DateFormat formatter = new SimpleDateFormat("HH.mm");
@@ -62,25 +74,35 @@ public class SubscribeService {
 
                 query.executeUpdate();
 
-//                entityManager.flush();
-
-//                entityManager.getTransaction().commit();
-
                 query = entityManager.createQuery("SELECT s.id FROM SubscribeEntity s ORDER BY s.id DESC");
 
                 subscription = query.setMaxResults(1).getResultList();
                 subscription_id = (int) subscription.get(0);
 
-                query = entityManager.createNativeQuery("INSERT INTO subscribetime(SubscribeId, StartTime, EndTime) VALUES (:subscription_id, :start_time, :end_time)");
+                JsonArray subscriptionTimeList = subscriptionJson.getAsJsonArray("subscription_list");
 
-                query.setParameter("subscription_id", subscription_id);
-                query.setParameter("start_time", new java.sql.Time(formatter.parse(subscriptionJson.get("start_time").getAsString()).getTime()));
-                query.setParameter("end_time", new java.sql.Time(formatter.parse(subscriptionJson.get("end_time").getAsString()).getTime()));
+                List <SubscribetimeEntity> subscribetimeEntityList = new ArrayList<>();
+                int i =1;
 
-//                query.setParameter("start_time", subscriptionJson.get("start_time").getAsString());
-//                query.setParameter("end_time", subscriptionJson.get("end_time").getAsString());
+                for (JsonElement subscription_item:subscriptionTimeList) {
 
-                query.executeUpdate();
+                    SubscribetimeEntity subscribetimeEntity = new SubscribetimeEntity();
+
+                    subscribetimeEntity.setSubscribeId(subscription_id);
+                    subscribetimeEntity.setId(i);
+                    subscribetimeEntity.setDay(((JsonObject)subscription_item).get("day").getAsInt());
+                    subscribetimeEntity.setStartTime(new java.sql.Time(formatter.parse(((JsonObject)subscription_item).get("start_time").getAsString()).getTime()));
+                    subscribetimeEntity.setEndTime(new java.sql.Time(formatter.parse(((JsonObject)subscription_item).get("end_time").getAsString()).getTime()));
+
+                    subscribetimeEntityList.add(subscribetimeEntity);
+                    i++;
+                }
+
+                for (SubscribetimeEntity subscribetimeEntity: subscribetimeEntityList) {
+
+                    entityManager.persist(subscribetimeEntity);
+
+                }
 
                 entityManager.getTransaction().commit();
 
