@@ -21,6 +21,9 @@ public class APIHandler {
     private SubscribeService subscribeService;
 
     @Autowired
+    private NewsFeedService newsFeedService;
+
+    @Autowired
     private NotificationService notificationService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -70,7 +73,7 @@ public class APIHandler {
         return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, response));
     }
 
-    @RequestMapping(value = "/{version}/{apikey}/getroutes", method = RequestMethod.POST,
+    @RequestMapping(value = "/{version}/{apikey}/getroutes", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getRoutes(@PathVariable("version") String version, @PathVariable("apikey") String apiKey) {
         if (!Util.isValidRequest(version, apiKey)) {
@@ -80,35 +83,70 @@ public class APIHandler {
         return new Gson().toJson(Collections.singletonMap("routes", routes));
     }
 
-    @RequestMapping(value = "/{version}/{apikey}/getstations", method = RequestMethod.POST,
+    @RequestMapping(value = "/{version}/{apikey}/getroutestations", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getStations(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
+    public String getRouteStations(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
-        List stations = subscribeService.getStations(json);
+        List stations = subscribeService.getRouteStations(json);
         return new Gson().toJson(Collections.singletonMap("stations", stations));
     }
 
     //    Comment/Notification requests
 
-    @RequestMapping(value = "/{version}/{apikey}/gettrains", method = RequestMethod.POST,
+    @RequestMapping(value = "/{version}/{apikey}/getalltrains", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getTrains(@PathVariable("version") String version, @PathVariable("apikey") String apiKey) {
+    public String getAllTrains(@PathVariable("version") String version, @PathVariable("apikey") String apiKey) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
-        List routes = notificationService.getTrains();
-        return new Gson().toJson(Collections.singletonMap("trains", routes));
+        JsonArray trains = notificationService.getAllTrains();
+        return new Gson().toJson(Collections.singletonMap("trains", trains));
     }
+
+
+    @RequestMapping(value = "/{version}/{apikey}/getroutetrains", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getRouteTrains(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
+        if (!Util.isValidRequest(version, apiKey)) {
+            return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
+        }
+        JsonArray trains = notificationService.getRouteTrains(json);
+        return new Gson().toJson(Collections.singletonMap("trains", trains));
+    }
+
+
+    @RequestMapping(value = "/{version}/{apikey}/gettrainstations", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getTrainStations(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
+        if (!Util.isValidRequest(version, apiKey)) {
+            return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
+        }
+        List stations = notificationService.getTrainStations(json);
+        return new Gson().toJson(Collections.singletonMap("stations", stations));
+    }
+
+    @RequestMapping(value = "/{version}/{apikey}/addnews", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String addNews(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
+        if (!Util.isValidRequest(version, apiKey)) {
+            return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
+        }
+        String status = notificationService.addNews(json);
+        return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, status));
+    }
+
+
+    // News Feed requests
 
     @RequestMapping(value = "/{version}/{apikey}/getnewsheadlines", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getNewsHeadlines(@PathVariable("version") String version, @PathVariable("apikey") String apiKey) {
+    public String getNewsHeadlines(@PathVariable("version") String version, @PathVariable("apikey") String apiKey,@RequestBody String json) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
-        JsonArray news_headlines = notificationService.getNewsHeadlines();
+        JsonArray news_headlines = newsFeedService.getNewsHeadlines(json);
         return new Gson().toJson(Collections.singletonMap("news_headlines", news_headlines));
     }
 
@@ -118,7 +156,7 @@ public class APIHandler {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
-        JsonObject news_details = notificationService.getNewsDeatils(json);
+        JsonObject news_details = newsFeedService.getNewsDetails(json);
         return new Gson().toJson(Collections.singletonMap("news_details", news_details));
     }
 }
