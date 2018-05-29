@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.Collections;
 import java.util.List;
 
@@ -166,15 +165,13 @@ public class APIHandler {
 
     // Railway API v1.0
 
-    @RequestMapping(value = "/{version}/{apikey}/searchtrain", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String searchTrain(@PathVariable("version") String version, @PathVariable("apikey") String apiKey,
-                              @PathParam("lang") String lang, @PathParam("startStationID") String startStationID,
-                              @PathParam("endStationID") String endStationID, @PathParam("searchDate") String searchDate,
-                              @PathParam("startTime") String startTime, @PathParam("endTime") String endTime) {
+    @RequestMapping(value = "/{version}/{apikey}/searchtrain", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchTrain(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
-        return trainService.searchTrain(lang, startStationID, endStationID, searchDate, startTime, endTime);
+        return trainService.searchTrain(json);
     }
 }
 
