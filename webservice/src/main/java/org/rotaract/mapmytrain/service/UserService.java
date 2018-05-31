@@ -18,9 +18,10 @@ public class UserService {
 
     private JsonParser jsonParser = new JsonParser();
 
-    public String addUser(String json) {
+    public JsonObject addUser(String json) {
 
         EntityManagerFactory factory;
+        JsonObject resMsg = new JsonObject();
 
         try {
             factory = Persistence.createEntityManagerFactory("org.hibernate.mapmytrain.jpa");
@@ -30,35 +31,50 @@ public class UserService {
         }
 
         EntityManager entityManager = factory.createEntityManager();
-
-        String resMsg = Constant.Status.SUCCESS;
         JsonObject userJson = (JsonObject) jsonParser.parse(json);
 
         try {
             entityManager.getTransaction( ).begin( );
 
-            Query query = entityManager.createQuery( "SELECT e FROM UserEntity e WHERE e.phoneNum IS " + "'"
-                            + userJson.get("phone_num").getAsString() + "'");
+
+            Query query = entityManager.createQuery("SELECT u FROM UserEntity u");
 
             List users = query.getResultList();
 
-            if(users.isEmpty())
+            if (users.isEmpty())
             {
-                UserEntity user = new UserEntity();
-                user.setName(userJson.get("name").getAsString());
-                user.setPhoneNum(userJson.get("phone_num").getAsString());
-
-                entityManager.persist(user);
-                entityManager.getTransaction().commit();
-            }else
-            {
-                resMsg = Constant.Status.USER_ALREADY_EXISTS_ERROR ;
+                entityManager.createNativeQuery("ALTER TABLE USER AUTO_INCREMENT = 1").executeUpdate();
             }
+
+            UserEntity user = new UserEntity();
+
+            if (userJson.has("name")){
+                user.setName(userJson.get("name").getAsString());
+            }
+
+            if (userJson.has("phone_num")){
+                user.setPhoneNum(userJson.get("phone_num").getAsString());
+            }
+
+
+            entityManager.persist(user);
+
+            entityManager.getTransaction().commit();
+
+            resMsg.addProperty(Constant.Status.STATUS, Constant.Status.SUCCESS);
+
+            query = entityManager.createQuery( "SELECT u FROM UserEntity u ORDER BY u.id DESC");
+
+            users = query.setMaxResults(1).getResultList();
+
+            user = (UserEntity)users.get(0);
+
+            resMsg.addProperty("user_id", user.getUserId());
 
             entityManager.close( );
 
         } catch (Exception e) {
-            resMsg = Constant.Status.ERROR;
+            resMsg.addProperty(Constant.Status.STATUS, getStackTrace(e));
         } finally {
            factory.close();
         }

@@ -42,13 +42,10 @@ public class SubscribeService {
         try {
             entityManager.getTransaction().begin();
 
-            Query query = entityManager.createQuery("SELECT e FROM UserEntity e WHERE e.phoneNum IS" + "'"
-                    + subscriptionJson.get("phone_num").getAsString() + "'");
-
-            int user_id = ((UserEntity) query.getSingleResult()).getUserId();
+            int user_id = subscriptionJson.get("user_id").getAsInt();
             int subscription_id = 0;
 
-            query = entityManager.createQuery("SELECT e FROM SubscribeEntity e");
+            Query query = entityManager.createQuery("SELECT e FROM SubscribeEntity e");
 
             List subscription = query.getResultList();
 
@@ -63,7 +60,7 @@ public class SubscribeService {
             subscription = query.getResultList();
 
             if (subscription.isEmpty()) {
-                DateFormat formatter = new SimpleDateFormat("HH.mm");
+                DateFormat formatter = new SimpleDateFormat("HH:mm");
 
                 query = entityManager.createNativeQuery("INSERT INTO subscribe(RouteId, UserId, StartLoc, EndLoc) VALUES (:route_id, :user_id, :start_loc, :end_loc)");
 

@@ -40,8 +40,8 @@ public class APIHandler {
         if (!Util.isValidRequest(version, apiKey)) {
             return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
         }
-        String status = userService.addUser(json);
-        return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, status));
+        JsonObject status = userService.addUser(json);
+        return new Gson().toJson(status);
     }
 
     @RequestMapping(value = "/{version}/{apikey}/updateusername", method = RequestMethod.POST,
@@ -138,6 +138,16 @@ public class APIHandler {
         return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, status));
     }
 
+
+    @RequestMapping(value = "/{version}/{apikey}/searchalerts", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String searchAlerts(@PathVariable("version") String version, @PathVariable("apikey") String apiKey, @RequestBody String json) {
+        if (!Util.isValidRequest(version, apiKey)) {
+            return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, Constant.Status.ERROR_REQUEST));
+        }
+        JsonArray status = notificationService.searchAlerts(json);
+        return new Gson().toJson(Collections.singletonMap(Constant.Status.STATUS, status));
+    }
 
     // News Feed requests
 

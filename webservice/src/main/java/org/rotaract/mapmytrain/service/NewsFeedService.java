@@ -134,7 +134,7 @@ public class NewsFeedService {
             newsDetail.addProperty("url",news.getLink());
             newsDetail.addProperty("desc", news.getDescription());
             newsDetail.addProperty("date",news.getDate().toString());
-            newsDetail.addProperty("time", news.getTime().getTime());
+            newsDetail.addProperty("time", news.getTime().toString());
 
 
             entityManager.close();
