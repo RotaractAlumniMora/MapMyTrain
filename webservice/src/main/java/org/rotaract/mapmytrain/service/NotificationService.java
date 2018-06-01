@@ -3,7 +3,10 @@ package org.rotaract.mapmytrain.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.rotaract.mapmytrain.dao.*;
+import org.rotaract.mapmytrain.dao.NewsEntity;
+import org.rotaract.mapmytrain.dao.NewstypeEntity;
+import org.rotaract.mapmytrain.dao.TrainEntity;
+import org.rotaract.mapmytrain.dao.UserEntity;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -12,7 +15,6 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -427,221 +429,201 @@ public class NotificationService {
         JsonArray alertList = new JsonArray();
         JsonObject alertJson = (JsonObject) jsonParser.parse(json);
 
-        if (alertJson.get("alert_type").getAsInt() == 0)
-            {
+        try {
+            factory = Persistence.createEntityManagerFactory("org.hibernate.mapmytrain.jpa");
+        } catch (Throwable ex) {
+            System.err.println("Failed to create sessionFactory object." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
 
-                JsonObject dummy1 = new JsonObject();
+        EntityManager entityManager = factory.createEntityManager();
 
-                dummy1.addProperty("alert_type", "Delay");
-                dummy1.addProperty("train_id", 1075);
-                dummy1.addProperty("train_name", "yaldevi");
-                dummy1.addProperty("message", "1h 30 min");
+        try {
+            entityManager.getTransaction().begin();
+
+            Query query = entityManager.createQuery("SELECT t FROM TrainEntity t WHERE t.routeId IS " + "'"
+                    + alertJson.get("route_id").getAsInt() + "'");
+
+            List routeTrains = query.getResultList();
+
+            for (Object subscribedTrainElement : routeTrains) {
+
+                TrainEntity train = (TrainEntity) subscribedTrainElement;
+
+                query = entityManager.createQuery("SELECT n FROM NewsEntity n WHERE n.trainId IS " + "'"
+                        + train.getTrainId() + "' AND Date(n.recordTimestamp) =" + "'"
+                        + alertJson.get("date").getAsString() + "' ORDER BY n.recordTimestamp DESC");
+
+                List newsList = query.getResultList();
+
+                List delayTimeList = new ArrayList<String>();
+                int cancelNotificationCount = 0;
+                Map<String, String> lateDepNotificationMap = new HashMap<String, String>();
+
+                List delayTimeStamp = new ArrayList<Timestamp>();
+                List cancelTimeStamp = new ArrayList<Timestamp>();
+                List lateDepTimeStamp = new ArrayList<Timestamp>();
+
+                for (Object listElement : newsList) {
+
+                    NewsEntity news = (NewsEntity) listElement;
+
+                    if (news.getNewsTypeId() == 1) {
+
+//                            int delayInMin = Integer.parseInt();
+
+                        delayTimeList.add(news.getMessage());
+                        delayTimeStamp.add(news.getRecordTimestamp());
+
+                    } else if (news.getNewsTypeId() == 2) {
+
+                        cancelNotificationCount++;
+                        cancelTimeStamp.add(news.getRecordTimestamp());
+
+                    } else if (news.getNewsTypeId() == 3) {
+
+                        lateDepNotificationMap.put(news.getMessage().split(" ")[0], news.getMessage().split(" ")[1]);
+                        lateDepTimeStamp.add(news.getRecordTimestamp());
+                    }
+
+                }
+
+                if (alertJson.get("alert_type").getAsInt() == 0) {
+
+                    if (!delayTimeList.isEmpty() && delayTimeList.size() > Constant.NotificationConfig.RELIABILITY_THRESHOLD) {
+                        JsonObject delayJson = new JsonObject();
+
+                        delayJson.addProperty("alert_type", "Delay");
+                        delayJson.addProperty("train_id", train.getTrainId());
+                        delayJson.addProperty("train_name", train.getName());
+                        delayJson.addProperty("message", delayTimeList.get(0).toString());
+
+                        String originalString = delayTimeStamp.get(0).toString();
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
+                        String time = new SimpleDateFormat("H:mm").format(date);
+                        delayJson.addProperty("time", time);
+
+                        alertList.add(delayJson);
+
+                    } else if (cancelNotificationCount > Constant.NotificationConfig.RELIABILITY_THRESHOLD) {
+
+                        JsonObject cancelJson = new JsonObject();
+
+                        cancelJson.addProperty("alert_type", "Cancelled");
+                        cancelJson.addProperty("train_id", train.getTrainId());
+                        cancelJson.addProperty("train_name", train.getName());
+                        cancelJson.addProperty("message", "");
+
+                        String originalString = cancelTimeStamp.get(0).toString();
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
+                        String time = new SimpleDateFormat("H:mm").format(date);
+                        cancelJson.addProperty("time", time);
+
+                        alertList.add(cancelJson);
+
+                    } else if (!lateDepNotificationMap.isEmpty() && lateDepNotificationMap.size() > Constant.NotificationConfig.RELIABILITY_THRESHOLD) {
+
+                        JsonObject lateDepJson = new JsonObject();
+
+                        lateDepJson.addProperty("alert_type", "Late Departure");
+                        lateDepJson.addProperty("train_id", train.getTrainId());
+                        lateDepJson.addProperty("train_name", train.getName());
+
+                        Map.Entry<String, String> entry = lateDepNotificationMap.entrySet().iterator().next();
+                        String key = entry.getKey();
+                        String value = entry.getValue();
+
+                        lateDepJson.addProperty("message", key);
+
+                        String originalString = lateDepTimeStamp.get(0).toString();
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
+                        String time = new SimpleDateFormat("H:mm").format(date);
+                        lateDepJson.addProperty("time", time);
+
+                        alertList.add(lateDepJson);
+
+                    }
 
 
-                JsonObject dummy2 = new JsonObject();
+                } else if (alertJson.get("alert_type").getAsInt() == 1) {
 
-                dummy2.addProperty("alert_type", "Late Departure");
-                dummy2.addProperty("train_id", 6071);
-                dummy2.addProperty("train_name", "Udarata manike");
-                dummy2.addProperty("message", "Badulla");
+                    if (!delayTimeList.isEmpty() && delayTimeList.size() > Constant.NotificationConfig.RELIABILITY_THRESHOLD) {
 
-                JsonObject dummy3 = new JsonObject();
+                        JsonObject delayJson = new JsonObject();
 
-                dummy3.addProperty("alert_type", "Cancellation");
-                dummy3.addProperty("train_id", 2456);
-                dummy3.addProperty("train_name", "Rajarata Rejini");
-                dummy3.addProperty("message", "Cololmbo Fort");
+                        delayJson.addProperty("alert_type", "Delay");
+                        delayJson.addProperty("train_id", train.getTrainId());
+                        delayJson.addProperty("train_name", train.getName());
+                        delayJson.addProperty("message", delayTimeList.get(0).toString());
 
-                alertList.add(dummy1);
-                alertList.add(dummy2);
-                alertList.add(dummy3);
+                        String originalString = delayTimeStamp.get(0).toString();
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
+                        String time = new SimpleDateFormat("H:mm").format(date);
+                        delayJson.addProperty("time", time);
 
+                        alertList.add(delayJson);
 
-            }else if (alertJson.get("alert_type").getAsInt() == 1){
+                    }
 
-                JsonObject dummy1 = new JsonObject();
+                } else if (alertJson.get("alert_type").getAsInt() == 2) {
 
-                dummy1.addProperty("alert_type", "Delay");
-                dummy1.addProperty("train_id", 1075);
-                dummy1.addProperty("train_name", "yaldevi");
-                dummy1.addProperty("message", "1h 30 min");
+                    if (cancelNotificationCount > Constant.NotificationConfig.RELIABILITY_THRESHOLD) {
 
+                        JsonObject cancelJson = new JsonObject();
 
-                JsonObject dummy2 = new JsonObject();
+                        cancelJson.addProperty("alert_type", "Cancelled");
+                        cancelJson.addProperty("train_id", train.getTrainId());
+                        cancelJson.addProperty("train_name", train.getName());
+                        cancelJson.addProperty("message", "");
 
-                dummy2.addProperty("alert_type", "Delay");
-                dummy2.addProperty("train_id", 6071);
-                dummy2.addProperty("train_name", "Udarata manike");
-                dummy2.addProperty("message", "45 min");
+                        String originalString = cancelTimeStamp.get(0).toString();
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
+                        String time = new SimpleDateFormat("H:mm").format(date);
+                        cancelJson.addProperty("time", time);
 
-                JsonObject dummy3 = new JsonObject();
+                        alertList.add(cancelJson);
 
-                dummy3.addProperty("alert_type", "Delay");
-                dummy3.addProperty("train_id", 2456);
-                dummy3.addProperty("train_name", "Rajarata Rejini");
-                dummy3.addProperty("message", "5 h");
+                    }
 
-                alertList.add(dummy1);
-                alertList.add(dummy2);
-                alertList.add(dummy3);
+                } else if (alertJson.get("alert_type").getAsInt() == 3) {
 
+                    if (!lateDepNotificationMap.isEmpty() && lateDepNotificationMap.size() > Constant.NotificationConfig.RELIABILITY_THRESHOLD) {
 
-        }else if (alertJson.get("alert_type").getAsInt() == 2){
+                        JsonObject lateDepJson = new JsonObject();
 
-                JsonObject dummy1 = new JsonObject();
+                        lateDepJson.addProperty("alert_type", "Late Departure");
+                        lateDepJson.addProperty("train_id", train.getTrainId());
+                        lateDepJson.addProperty("train_name", train.getName());
 
-                dummy1.addProperty("alert_type", "Cancellation");
-                dummy1.addProperty("train_id", 1075);
-                dummy1.addProperty("train_name", "yaldevi");
-                dummy1.addProperty("message", "");
+                        Map.Entry<String, String> entry = lateDepNotificationMap.entrySet().iterator().next();
+                        String key = entry.getKey();
+                        String value = entry.getValue();
 
+                        lateDepJson.addProperty("message", key);
 
-                JsonObject dummy2 = new JsonObject();
+                        String originalString = lateDepTimeStamp.get(0).toString();
+                        Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(originalString);
+                        String time = new SimpleDateFormat("H:mm").format(date);
+                        lateDepJson.addProperty("time", time);
 
-                dummy2.addProperty("alert_type", "Cancellation");
-                dummy2.addProperty("train_id", 6071);
-                dummy2.addProperty("train_name", "Udarata manike");
-                dummy2.addProperty("message", "Badulla");
+                        alertList.add(lateDepJson);
 
-                JsonObject dummy3 = new JsonObject();
+                    }
 
-                dummy3.addProperty("alert_type", "Cancellation");
-                dummy3.addProperty("train_id", 2456);
-                dummy3.addProperty("train_name", "Rajarata Rejini");
-                dummy3.addProperty("message", "");
-
-                alertList.add(dummy1);
-                alertList.add(dummy2);
-                alertList.add(dummy3);
-
-
-        }else if (alertJson.get("alert_type").getAsInt() == 3){
-                JsonObject dummy1 = new JsonObject();
-
-                dummy1.addProperty("alert_type", "Late Departure");
-                dummy1.addProperty("train_id", 1075);
-                dummy1.addProperty("train_name", "yaldevi");
-                dummy1.addProperty("message", "Omanthai");
-
-
-                JsonObject dummy2 = new JsonObject();
-
-                dummy2.addProperty("alert_type", "Late Departure");
-                dummy2.addProperty("train_id", 6071);
-                dummy2.addProperty("train_name", "Udarata manike");
-                dummy2.addProperty("message", "");
-
-                JsonObject dummy3 = new JsonObject();
-
-                dummy3.addProperty("alert_type", "Late Departure");
-                dummy3.addProperty("train_id", 2456);
-                dummy3.addProperty("train_name", "Rajarata Rejini");
-                dummy3.addProperty("message", "Vavuniya");
-
-                alertList.add(dummy1);
-                alertList.add(dummy2);
-                alertList.add(dummy3);
+                }
 
             }
 
-//        try {
-//            factory = Persistence.createEntityManagerFactory("org.hibernate.mapmytrain.jpa");
-//        } catch (Throwable ex) {
-//            System.err.println("Failed to create sessionFactory object." + ex);
-//            throw new ExceptionInInitializerError(ex);
-//        }
-//
-//        EntityManager entityManager = factory.createEntityManager();
-//
-//        try {
-//            entityManager.getTransaction().begin();
-//
-//            Query query = entityManager.createQuery("SELECT t FROM TrainEntity t WHERE t.routeId IS " + "'"
-//                        + alertJson.get("route_id").getAsInt() + "'");
-//
-//            List routeTrains = query.getResultList();
-//
-//            for (Object subscribedTrainElement : routeTrains) {
-//
-//                TrainEntity train = (TrainEntity) subscribedTrainElement;
-//
-//                query = entityManager.createQuery("SELECT n FROM NewsEntity n WHERE n.trainId IS " + "'"
-//                        + train.getTrainId() + "' AND Date(n.recordTimestamp) =" + "'"
-//                        + alertJson.get("date").getAsString() + "'");
-//
-//                List newsList = query.getResultList();
-//
-//
-//                if (alertJson.get("alert_type").getAsInt() == 0)
-//                {
-//
-//                }else if (alertJson.get("alert_type").getAsInt() == 1){
-//
-//                }else if (alertJson.get("alert_type").getAsInt() == 2){
-//
-//                }else if (alertJson.get("alert_type").getAsInt() == 3){
-//
-//                }
-//
-//                List delayTimeList = new ArrayList<Integer>();
-//                int cancelNotificationCount = 0;
-//                Map<String, String> lateDepNotificationMap = new HashMap<String, String>();
-//
-//                for (Object listElement : newsList) {
-//
-//                    NewsEntity news = (NewsEntity) listElement;
-//
-//                    if (news.getNewsTypeId() == 1) {
-//
-//                        int delayInMin = Integer.parseInt(news.getMessage().split(" ")[0]) * 60
-//                                + Integer.parseInt(news.getMessage().split(" ")[1]);
-//
-//                        delayTimeList.add(delayInMin);
-//
-//                    } else if (news.getNewsTypeId() == 2) {
-//
-//                        cancelNotificationCount++;
-//
-//                    } else if (news.getNewsTypeId() == 3) {
-//
-//                        lateDepNotificationMap.put(news.getMessage().split(" ")[0], news.getMessage().split(" ")[1]);
-//                    }
-//                }
-//
-//
-//            }
-//
-////                for (Object train : trains) {
-////
-////                    JsonObject trainInfo = new JsonObject();
-////
-////                    trainInfo.addProperty("train_id", ((TrainEntity) train).getTrainId());
-////                    trainInfo.addProperty("name", ((TrainEntity) train).getName());
-////                    trainInfo.addProperty("start_loc", ((TrainEntity) train).getStartLoc());
-////                    trainInfo.addProperty("end_loc", ((TrainEntity) train).getEndLoc());
-////                    trainInfo.addProperty("start_time", ((TrainEntity) train).getStartTime().toString());
-////                    trainInfo.addProperty("end_time", ((TrainEntity) train).getEndTime().toString());
-////
-////                    trainList.add(trainInfo);
-////
-////                }
-//            } else {
-//                JsonObject error = new JsonObject();
-//                error.addProperty(Constant.Status.STATUS, Constant.Status.DAY_NOT_SUBSCRIBED_ERROR);
-//
-//            }
-//
-//            entityManager.close();
-//
-//
-//        } catch (Exception e) {
-//            JsonObject error = new JsonObject();
-//            error.addProperty(Constant.Status.STATUS, getStackTrace(e));
-////            trainList.add(error);
-//        } finally {
-//            factory.close();
-//        }
-//
+            entityManager.close();
+
+
+        } catch (Exception e) {
+            JsonObject error = new JsonObject();
+            error.addProperty(Constant.Status.STATUS, getStackTrace(e));
+            alertList.add(error);
+        } finally {
+            factory.close();
+        }
 
         return alertList;
     }
