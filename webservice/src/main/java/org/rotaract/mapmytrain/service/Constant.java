@@ -12,6 +12,12 @@ public class Constant {
         public final static String USER_ALREADY_EXISTS_ERROR = "USER_ALREADY_EXISTS";
         public final static String USER_ALREADY_SUBSCRIBED_ERROR = "USER_ALREADY_SUBSCRIBED";
         public final static String DAY_NOT_SUBSCRIBED_ERROR = "DAY_NOT_SUBSCRIBED";
+
+    }
+
+    public static class NotificationConfig {
+
+        public final static int RELIABILITY_THRESHOLD = 2;
     }
 
     public static class EnvironmentVariable {
