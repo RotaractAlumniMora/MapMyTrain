@@ -1,3 +1,6 @@
+# Compiled files
+target/
+
 # IDE file
 .idea/
 *.iml
