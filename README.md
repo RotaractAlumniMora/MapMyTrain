@@ -1,6 +1,4 @@
-# MapMyTrain
-
-## Web Service
+# TrainLK - Web Service
 
 ---
 - spring_boot_version: 1.5.2.RELEASE
